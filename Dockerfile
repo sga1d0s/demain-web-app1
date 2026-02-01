@@ -1,6 +1,18 @@
-# Etapa 1: dependencias PHP (Composer)
-FROM composer:2 AS deps
+# Etapa 1: dependencias PHP (Composer) — mismo PHP que runtime para evitar reqs
+FROM composer:2 AS composerbin
+
+FROM php:8.3-cli-bookworm AS deps
 WORKDIR /app
+
+# Herramientas mínimas para Composer y extensiones que suelen exigir los paquetes
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends git unzip curl \
+ && rm -rf /var/lib/apt/lists/*
+RUN docker-php-ext-install pdo_mysql
+
+# Composer (binario) desde la imagen oficial
+COPY --from=composerbin /usr/bin/composer /usr/bin/composer
+
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 COPY . .
