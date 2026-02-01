@@ -7,7 +7,7 @@ COPY . .
 RUN npm run build
 
 # Etapa 2: runtime PHP (incluye composer install)
-FROM php:8.3-cli-bookworm
+FROM php:8.4-cli-bookworm
 WORKDIR /var/www/html
 
 # Paquetes mínimos + extensiones típicas Laravel
