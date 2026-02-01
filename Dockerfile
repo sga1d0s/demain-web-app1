@@ -6,9 +6,20 @@ WORKDIR /app
 
 # Herramientas mínimas para Composer y extensiones que suelen exigir los paquetes
 RUN apt-get update \
- && apt-get install -y --no-install-recommends git unzip curl \
+ && apt-get install -y --no-install-recommends \
+      git unzip curl \
+      libicu-dev libzip-dev zlib1g-dev libonig-dev \
  && rm -rf /var/lib/apt/lists/*
-RUN docker-php-ext-install pdo_mysql
+
+# Extensiones típicas para Laravel (y dependencias comunes)
+RUN docker-php-ext-install \
+      pdo_mysql \
+      mbstring \
+      bcmath \
+      exif \
+      pcntl \
+      intl \
+      zip
 
 # Composer (binario) desde la imagen oficial
 COPY --from=composerbin /usr/bin/composer /usr/bin/composer
@@ -29,9 +40,19 @@ RUN npm run build
 # Etapa 3: runtime (CLI para artisan serve)
 FROM php:8.3-cli-bookworm
 RUN apt-get update \
- && apt-get install -y --no-install-recommends curl \
+ && apt-get install -y --no-install-recommends \
+      curl \
+      libicu-dev libzip-dev zlib1g-dev libonig-dev \
  && rm -rf /var/lib/apt/lists/*
-RUN docker-php-ext-install pdo_mysql
+
+RUN docker-php-ext-install \
+      pdo_mysql \
+      mbstring \
+      bcmath \
+      exif \
+      pcntl \
+      intl \
+      zip
 WORKDIR /var/www/html
 COPY --from=deps /app ./
 COPY --from=assets /app/public/build /var/www/html/public/build
