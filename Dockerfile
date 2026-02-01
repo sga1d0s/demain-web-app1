@@ -2,9 +2,9 @@
 FROM composer:2 AS deps
 WORKDIR /app
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader || true
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 COPY . .
-RUN composer dump-autoload -o
+RUN composer dump-autoload -o --no-scripts
 
 # Etapa 2: Node (Vite) — build de assets
 FROM node:20-alpine AS assets
