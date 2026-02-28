@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\WorkOrderController;
 
 
-Route::get('/', function () {
-  return view('welcome');
-});
+// Route::get('/', function () {
+//   return view('welcome');
+// });
 
 Route::get('/health', function (Request $request) {
   try {
@@ -44,7 +44,8 @@ Route::middleware(['auth'])->group(function () {
   Route::post('/work-orders', [WorkOrderController::class, 'store'])->name('workorders.store');
 });
 
-Route::get('/demo', fn() => redirect()->route('demo.login'));
+// Route::get('/demo', fn() => redirect()->route('demo.login'));
+Route::get('/', fn() => redirect()->route('demo.login'));
 
 require __DIR__ . '/auth.php';
 require __DIR__ . '/demo.php';
