@@ -6,41 +6,45 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\WorkOrderController;
 
+
 Route::get('/', function () {
-    return view('welcome');
+  return view('welcome');
 });
 
 Route::get('/health', function (Request $request) {
-    try {
-        DB::connection()->getPdo();
-        return response()->json([
-            'OK' => true,
-            'DB' => DB::connection()->getDatabaseName(),
-            'user' => $request->user()?->name,
-        ]);
-    } catch (\Throwable $e) {
-        return response()->json([
-            'OK' => false,
-            'error' => $e->getMessage()
-        ], 500);
-    }
+  try {
+    DB::connection()->getPdo();
+    return response()->json([
+      'OK' => true,
+      'DB' => DB::connection()->getDatabaseName(),
+      'user' => $request->user()?->name,
+    ]);
+  } catch (\Throwable $e) {
+    return response()->json([
+      'OK' => false,
+      'error' => $e->getMessage()
+    ], 500);
+  }
 })->middleware('auth');
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+  return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+  Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+  Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+  Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 //  mini-front de ejemplo
 Route::middleware(['auth'])->group(function () {
-    Route::get('/work-orders', [WorkOrderController::class, 'index'])->name('workorders.index');
-    Route::get('/work-orders/create', [WorkOrderController::class, 'create'])->name('workorders.create');
-    Route::post('/work-orders', [WorkOrderController::class, 'store'])->name('workorders.store');
+  Route::get('/work-orders', [WorkOrderController::class, 'index'])->name('workorders.index');
+  Route::get('/work-orders/create', [WorkOrderController::class, 'create'])->name('workorders.create');
+  Route::post('/work-orders', [WorkOrderController::class, 'store'])->name('workorders.store');
 });
 
+Route::get('/demo', fn() => redirect()->route('demo.login'));
+
 require __DIR__ . '/auth.php';
+require __DIR__ . '/demo.php';
